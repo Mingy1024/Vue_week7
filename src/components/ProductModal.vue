@@ -34,8 +34,24 @@
                     placeholder="請輸入圖片連結"
                     v-model="products.imageUrl"
                   />
-                  <img class="img-fluid" :src="products.imageUrl" />
                 </div>
+                <div class="mb-3">
+                  <label for="customFile" class="form-label"
+                    >或 上傳圖片
+                    <!-- <i
+                      class="fas fa-spinner fa-spin"
+                      v-if="status.fileUploading"
+                    ></i> -->
+                  </label>
+                  <input
+                    type="file"
+                    id="customFile"
+                    class="form-control"
+                    ref="fileInput"
+                    @change="uploadFile"
+                  />
+                </div>
+                <img class="img-fluid" :src="products.imageUrl" />
               </div>
               <div class="mb-3">
                 <h3>多圖新增</h3>
@@ -185,7 +201,11 @@
           >
             取消
           </button>
-          <button type="button" class="btn btn-primary" @click="$emit('update-product',products)">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="$emit('update-product', products)"
+          >
             確認
           </button>
         </div>
@@ -210,6 +230,20 @@ export default {
       this.products = this.tempProduct
     }
   },
-  methods: {}
+  methods: {
+    uploadFile () {
+      const file = this.$refs.fileInput.files[0]
+      const formData = new FormData()
+      formData.append('file-to-upload', file)
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/upload`
+      this.$http.post(api, formData).then((res) => {
+        console.log(res)
+        this.products.imageUrl = res.data.imageUrl
+        this.$refs.fileInput.value = ''
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  }
 }
 </script>
