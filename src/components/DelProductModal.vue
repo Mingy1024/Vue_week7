@@ -33,7 +33,7 @@
           >
             取消
           </button>
-          <button type="button" class="btn btn-danger" @click="delProduct">
+          <button type="button" class="btn btn-danger" @click="$emit('del-product')">
             確認刪除
           </button>
         </div>
@@ -46,6 +46,7 @@
 import BootstrapModal from '@/libs/mixins/BootstrapModal'
 export default {
   props: ['tempProduct'],
+  emits: ['del-product'],
   mixins: [BootstrapModal]
 }
 </script>

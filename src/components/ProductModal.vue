@@ -185,7 +185,7 @@
           >
             取消
           </button>
-          <button type="button" class="btn btn-primary" @click="updateProduct">
+          <button type="button" class="btn btn-primary" @click="$emit('update-product',products)">
             確認
           </button>
         </div>
@@ -197,6 +197,7 @@
 import BootstrapModal from '@/libs/mixins/BootstrapModal'
 export default {
   props: ['isNew', 'tempProduct'],
+  emits: ['update-product'],
   mixins: [BootstrapModal],
   data () {
     return {

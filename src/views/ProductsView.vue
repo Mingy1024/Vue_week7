@@ -54,10 +54,12 @@
       :isNew="isNew"
       :tempProduct="tempProduct"
       ref="ProductModal"
+      @update-product = "updateProduct"
     ></ProductModal>
     <DelProductModal
       :tempProduct="tempProduct"
       ref="DelProductModal"
+      @del-product = "delProduct"
     ></DelProductModal>
   </div>
 </template>
@@ -74,12 +76,14 @@ export default {
       products: [],
       pagination: {},
       isNew: false,
-      tempProduct: {}
+      tempProduct: {},
+      currentPage: 1
     }
   },
   methods: {
     // 取得產品資料
     getData (page = 1) {
+      this.currentPage = page
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`
       this.$http
         .get(api)
@@ -112,6 +116,34 @@ export default {
         this.$refs.DelProductModal.openModal()
         console.log(this.tempProduct)
       }
+    },
+    updateProduct (item) {
+      this.tempProduct = item
+      let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`
+      let httpMethod = 'post'
+      if (!this.isNew) {
+        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`
+        httpMethod = 'put'
+      }
+      const ProductModal = this.$refs.ProductModal
+      this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
+        console.log(res)
+        ProductModal.hideModal()
+        this.getData(this.currentPage)
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    delProduct () {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`
+      this.$http.delete(api).then((res) => {
+        console.log(res)
+        const DelProductModal = this.$refs.DelProductModal
+        DelProductModal.hideModal()
+        this.getData(this.currentPage)
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   },
   mounted () {
