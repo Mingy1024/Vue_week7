@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <!-- <Loading :active="isLoading" :z-index="1060"></Loading> -->
+    <VLoading :active="isLoading" :z-index="1060"></VLoading>
     <!-- <ToastMessages></ToastMessages> -->
     <form class="row justify-content-center" @submit.prevent="login">
       <div class="col-md-6">
@@ -42,20 +42,24 @@
 export default {
   data () {
     return {
-      user: {}
+      user: {},
+      isLoading: false
     }
   },
   methods: {
     login () {
       const api = `${process.env.VUE_APP_API}admin/signin`
+      this.isLoading = true
       this.$http
         .post(api, this.user)
         .then((res) => {
+          this.isLoading = false
           const { token, expired } = res.data
           document.cookie = `Token=${token};expires=${new Date(expired)};`
           this.$router.push('/admin/products')
         })
         .catch((err) => {
+          this.isLoading = false
           console.log(err.response.data.message)
         })
     }

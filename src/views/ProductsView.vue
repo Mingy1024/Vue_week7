@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <VLoading :active="isLoading" :z-index="1060"></VLoading>
     <div class="text-end mt-4">
       <button class="btn btn-primary" type="button" @click="openModal('new')">
         建立新的產品
@@ -77,7 +78,8 @@ export default {
       pagination: {},
       isNew: false,
       tempProduct: {},
-      currentPage: 1
+      currentPage: 1,
+      isLoading: false
     }
   },
   methods: {
@@ -85,13 +87,16 @@ export default {
     getData (page = 1) {
       this.currentPage = page
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`
+      this.isLoading = true
       this.$http
         .get(api)
         .then((res) => {
           this.products = res.data.products
           this.pagination = res.data.pagination
+          this.isLoading = false
         })
         .catch((err) => {
+          this.isLoading = false
           alert(err.data.message)
         })
     },
@@ -120,6 +125,7 @@ export default {
     updateProduct (item) {
       this.tempProduct = item
       let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`
+      this.isLoading = true
       let httpMethod = 'post'
       if (!this.isNew) {
         api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`
@@ -127,21 +133,26 @@ export default {
       }
       const ProductModal = this.$refs.ProductModal
       this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
+        this.isLoading = false
         console.log(res)
         ProductModal.hideModal()
         this.getData(this.currentPage)
       }).catch((err) => {
+        this.isLoading = false
         console.log(err)
       })
     },
     delProduct () {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`
+      this.isLoading = true
       this.$http.delete(api).then((res) => {
+        this.isLoading = false
         console.log(res)
         const DelProductModal = this.$refs.DelProductModal
         DelProductModal.hideModal()
         this.getData(this.currentPage)
       }).catch((err) => {
+        this.isLoading = false
         console.log(err)
       })
     }
