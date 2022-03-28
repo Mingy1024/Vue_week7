@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import Pagination from '@/components/ProductsPagination.vue'
+import Pagination from '@/components/PaginationItem.vue'
 import ProductModal from '@/components/ProductModal.vue'
 import DelProductModal from '@/components/DelProductModal.vue'
 

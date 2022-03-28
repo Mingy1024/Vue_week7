@@ -62,10 +62,14 @@
       </template>
     </tbody>
   </table>
+  <Pagination :pages="pagination" @emitPages="getOrders"></Pagination>
 </template>
 
 <script>
+import Pagination from '@/components/PaginationItem.vue'
+
 export default {
+  components: { Pagination },
   data () {
     return {
       orders: {},
