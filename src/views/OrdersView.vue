@@ -52,7 +52,7 @@
               <button
                 class="btn btn-outline-danger btn-sm"
                 type="button"
-                @click="openDelOrderModal(item)"
+                @click="openDelModal(item)"
               >
                 刪除
               </button>
@@ -64,14 +64,16 @@
   </table>
   <Pagination :pages="pagination" @emitPages="getOrders"></Pagination>
   <OrderModal :order="tempOrder" ref="orderModal" @update-status="updateStatus"></OrderModal>
+  <DelModal :item="tempOrder" ref="delModal" @del-item="delOrder"></DelModal>
 </template>
 
 <script>
 import Pagination from '@/components/PaginationItem.vue'
 import OrderModal from '@/components/OrderModal.vue'
+import DelModal from '@/components/DelModal.vue'
 
 export default {
-  components: { Pagination, OrderModal },
+  components: { Pagination, OrderModal, DelModal },
   data () {
     return {
       orders: {},
@@ -115,10 +117,28 @@ export default {
         console.log(err.data.message)
       })
     },
+    delOrder () {
+      this.isLoading = true
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${this.tempOrder.id}`
+      this.$http.delete(api).then((res) => {
+        this.isLoading = false
+        const delModal = this.$refs.delModal
+        delModal.hideModal()
+        this.getOrders(this.currentPage)
+        console.log(res.data.message)
+      }).catch((err) => {
+        console.log(err.data.message)
+      })
+    },
     openModal (item) {
       this.tempOrder = { ...item }
       const orderModal = this.$refs.orderModal
       orderModal.openModal()
+    },
+    openDelModal (item) {
+      this.tempOrder = { ...item }
+      const delModal = this.$refs.delModal
+      delModal.openModal()
     }
   },
   mounted () {

@@ -58,9 +58,9 @@
       @update-product = "updateProduct"
     ></ProductModal>
     <DelProductModal
-      :tempProduct="tempProduct"
+      :item="tempProduct"
       ref="DelProductModal"
-      @del-product = "delProduct"
+      @del-item = "delProduct"
     ></DelProductModal>
   </div>
 </template>
@@ -68,7 +68,7 @@
 <script>
 import Pagination from '@/components/PaginationItem.vue'
 import ProductModal from '@/components/ProductModal.vue'
-import DelProductModal from '@/components/DelProductModal.vue'
+import DelProductModal from '@/components/DelModal.vue'
 
 export default {
   components: { Pagination, ProductModal, DelProductModal },
