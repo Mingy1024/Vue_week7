@@ -32,7 +32,7 @@
                 type="checkbox"
                 :id="`paidSwitch${item.id}`"
                 v-model="item.is_paid"
-                @change="updatePaid(item)"
+                @change="updateStatus(item)"
               />
               <label class="form-check-label" :for="`paidSwitch${item.id}`">
                 <span v-if="item.is_paid">已付款</span>
@@ -63,13 +63,15 @@
     </tbody>
   </table>
   <Pagination :pages="pagination" @emitPages="getOrders"></Pagination>
+  <OrderModal :order="tempOrder" ref="orderModal" @update-status="updateStatus"></OrderModal>
 </template>
 
 <script>
 import Pagination from '@/components/PaginationItem.vue'
+import OrderModal from '@/components/OrderModal.vue'
 
 export default {
-  components: { Pagination },
+  components: { Pagination, OrderModal },
   data () {
     return {
       orders: {},
@@ -96,6 +98,27 @@ export default {
           this.isLoading = false
           console.log(err)
         })
+    },
+    updateStatus (item) {
+      this.isLoading = true
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`
+      const paid = {
+        is_paid: item.is_paid
+      }
+      this.$http.put(api, { data: paid }).then((res) => {
+        this.isLoading = false
+        const orderModal = this.$refs.orderModal
+        orderModal.hideModal()
+        this.getOrders(this.currentPage)
+        console.log(res.data.message)
+      }).catch((err) => {
+        console.log(err.data.message)
+      })
+    },
+    openModal (item) {
+      this.tempOrder = { ...item }
+      const orderModal = this.$refs.orderModal
+      orderModal.openModal()
     }
   },
   mounted () {
